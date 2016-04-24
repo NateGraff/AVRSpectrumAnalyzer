@@ -6,7 +6,7 @@
  */ 
 
 #include <avr/io.h>
-
+#include "FHT/FHT.h"
 
 int main(void)
 {
