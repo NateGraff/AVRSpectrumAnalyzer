@@ -3,15 +3,17 @@
  *
  * Created: 2016-04-23 6:47:57 PM
  * Author : natil
- */ 
+ */
 
 // FHT Library Defines
 #define LOG_OUT 1
 #define FHT_N 16
 
+#include "FHT/FHT.h"
+#include "display.h"
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "FHT/FHT.h"
 
 volatile uint8_t sample;
 
