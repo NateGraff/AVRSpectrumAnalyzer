@@ -72,6 +72,7 @@ ISR(ADC_vect)
 		fht_run();
 		fht_mag_log();
 		
+		normalize_spectrum();
 		encode_display();
 		send_display();
 		

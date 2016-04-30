@@ -17,8 +17,10 @@
 #define DISPLAY_TEST_ON 0x01
 #define DISPLAY_TEST_OFF 0x00
 
+extern volatile uint8_t normalized_spectrum[8];
 extern volatile uint8_t vram[8];
 
+void normalize_spectrum();
 void encode_display();
 
 void init_SPI();

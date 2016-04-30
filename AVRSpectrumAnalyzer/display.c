@@ -2,10 +2,20 @@
 #include "display.h"
 #include <avr/io.h>
 
+volatile uint8_t normalized_spectrum[8];
 volatile uint8_t vram[8];
 
 extern uint8_t fht_log_out[8];
-#define DBC(A, B, C) ((fht_log_out[A] <= B) << C)
+void normalize_spectrum()
+{
+	uint8_t i;
+	for(i = 0; i < 8; i++)
+	{
+		normalized_spectrum[i] = fht_log_out[i] / 32; // 256 / 8
+	}
+}
+
+#define DBC(A, B, C) ((normalized_spectrum[A] <= B) << C)
 /*
  * DBC - Display Bit Check
  *   Checks if column A is less than or equal to B, and then left-shifts it by C
@@ -68,8 +78,8 @@ void send_cmd(uint8_t addr, uint8_t data)
 
 void send_display()
 {
-	uint8_t addr = 0x01;
-	for(addr; addr < 0x09; ++addr)
+	uint8_t addr;
+	for(addr = 0x01; addr < 0x09; ++addr)
 	{
 		send_cmd(addr, vram[addr-1]);
 	}
@@ -77,8 +87,8 @@ void send_display()
 
 void blank_display()
 {
-	uint8_t addr = 0x01;
-	for(addr; addr < 0x09; ++addr)
+	uint8_t addr;
+	for(addr = 0x01; addr < 0x09; ++addr)
 	{
 		send_cmd(addr, 0x00);
 	}	
