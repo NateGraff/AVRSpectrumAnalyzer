@@ -49,3 +49,37 @@ void encode_display()
 	vram[0] = DBC(0, 1, 6) | DBC(1, 1, 1) | DBC(2, 1, 5) | DBC(3, 1, 0) |
 			  DBC(4, 1, 4) | DBC(5, 1, 2) | DBC(6, 1, 7) | DBC(7, 1, 3);
 }
+
+void init_SPI()
+{
+	
+}
+
+void send_byte(uint8_t data)
+{
+	
+}
+
+void send_cmd(uint8_t addr, uint8_t data)
+{
+	send_byte(addr & 0x0F);
+	send_byte(data);
+}
+
+void send_display()
+{
+	uint8_t addr = 0x01;
+	for(addr; addr < 0x09; ++addr)
+	{
+		send_cmd(addr, vram[addr-1]);
+	}
+}
+
+void blank_display()
+{
+	uint8_t addr = 0x01;
+	for(addr; addr < 0x09; ++addr)
+	{
+		send_cmd(addr, 0x00);
+	}	
+}
