@@ -62,18 +62,26 @@ void encode_display()
 
 void init_SPI()
 {
+	DDRB |= (1<<MOSI)|(1<<SCK)|(1<<SS);
 	
-}
-
-void send_byte(uint8_t data)
-{
+	SPCR = (1<<SPE)|(1<<MSTR);
+	SPCR &= ~(1<<CPHA);
+	SPCR &= ~(1<<CPOL);
 	
+	PORTB |= (1<<SS);
 }
 
 void send_cmd(uint8_t addr, uint8_t data)
 {
-	send_byte(addr & 0x0F);
-	send_byte(data);
+	PORTB &= ~(1<<SS);
+	
+	SPDR = (addr & 0x0F);
+	while(!(SPSR & (1<<SPIF)));
+	
+	SPDR = data;
+	while(!(SPSR & (1<<SPIF)));
+	
+	PORTB |= (1<<SS);
 }
 
 void send_display()

@@ -3,6 +3,11 @@
 
 #include <avr/io.h>
 
+// SPI Pins
+#define MOSI PORTB3
+#define SCK  PORTB5
+#define SS   PORTB2
+
 // Control register addresses
 #define DECODE_MODE_ADDR 0x09
 #define INTENSITY_ADDR 0x0A
@@ -24,7 +29,6 @@ void normalize_spectrum();
 void encode_display();
 
 void init_SPI();
-void send_byte(uint8_t data);
 void send_cmd(uint8_t addr, uint8_t data);
 void send_display();
 void blank_display();
