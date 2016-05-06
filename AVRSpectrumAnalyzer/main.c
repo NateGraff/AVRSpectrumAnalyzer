@@ -30,13 +30,6 @@ void store_sample(uint8_t high_byte, uint8_t low_byte)
 
 int main(void)
 {
-    // ADC Configuration
-	ADMUX  = 0x00; // AREF, ADC0
-	ADCSRB = 0x00; // Free Running Mode
-	ADCSRA |= (1<<ADEN)|(1<<ADIE); // Enable ADC, ADC interrupt
-	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); // prescaler 128 TODO: minimize
-	DIDR0  |= (1<<ADC0D); // disable digital input
-	
 	// SPI and Display Configuration
 	init_SPI();
 	send_cmd(DECODE_MODE_ADDR, DECODE_MODE_NO_DECODE);
@@ -44,38 +37,14 @@ int main(void)
 	send_cmd(SCAN_LIMIT_ADDR, SCAN_LIMIT_MAX);
 	blank_display();
 	
-	// Display test mode
-	send_cmd(DISPLAY_TEST_ADDR, DISPLAY_TEST_ON);
-	_delay_ms(1000);
-	send_cmd(DISPLAY_TEST_ADDR, DISPLAY_TEST_OFF);
-	_delay_ms(1000);
-	
 	sample = 0;
-	
-	sei();
-	ADCSRA |= (1<<ADSC); // Start ADC
 
-    while(1);
-}
-
-ISR(ADC_vect)
-{
-	if(sample < FHT_N)
+    while(1)
 	{
-		store_sample(ADCH, ADCL);
-		++sample;
-	}
-	else
-	{
-		fht_window();
-		fht_reorder();
-		fht_run();
-		fht_mag_log();
-		
-		normalize_spectrum();
-		encode_display();
-		send_display();
-		
-		sample = 0;
+		// Display test mode
+		send_cmd(DISPLAY_TEST_ADDR, DISPLAY_TEST_ON);
+		_delay_ms(1000);
+		send_cmd(DISPLAY_TEST_ADDR, DISPLAY_TEST_OFF);
+		_delay_ms(1000);
 	}
 }
