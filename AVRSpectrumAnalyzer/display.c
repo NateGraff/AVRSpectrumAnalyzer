@@ -8,10 +8,27 @@ volatile uint8_t vram[8];
 extern uint8_t fht_log_out[8];
 void normalize_spectrum()
 {
+	/* 
+	 * Converts the 8-bit output data to a value in [0, 8]
+	 *   256 / 9 ~~ 28
+	 *   Anything below  15 is a 0
+	 *   Anything above 243 is an 8
+	 *   This makes the magnitudes roughly linear
+	 */
 	uint8_t i;
 	for(i = 0; i < 8; i++)
 	{
-		normalized_spectrum[i] = fht_log_out[i] / 32; // 256 / 8
+		if(fht_log_out[i] <= 14)
+		{
+			normalized_spectrum[i] = 0;
+		}
+		else if(fht_log_out[i] >= 242)
+		{
+			normalized_spectrum[i] = 8;
+		}
+		else {
+			normalized_spectrum[i] = fht_log_out[i] / 28;
+		}
 	}
 }
 
