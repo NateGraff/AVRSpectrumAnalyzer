@@ -49,30 +49,40 @@ int main(void)
 	blank_display();
 	
 	sample = 0;
-	
-	uint8_t column_list[8] = {1, 5, 7, 3, 0, 4, 6, 2};
-	uint8_t row_list[8] = {6, 1, 5, 0, 3, 7, 2, 4};
 
     while(1)
 	{
-		uint8_t column, row;
+		uint8_t column;
 		for(column = 0; column < 8; column++)
 		{
-			blank_vram();
-			vram[column_list[column]] = 0xFF;
+			normalized_spectrum[column] = column + 1;
+			encode_display();
 			send_display();
-			_delay_ms(50);
+			_delay_ms(75);
 		}
-		
-		for(row = 0; row < 8; row++)
+		for(column = 0; column < 8; column++)
 		{
-			blank_vram();
-			for(column = 0; column < 8; column++)
-			{
-				vram[column_list[column]] = (1<<row_list[row]);
-			}
+			normalized_spectrum[column] = 0;
+			encode_display();
 			send_display();
-			_delay_ms(50);
+			_delay_ms(75);
 		}
+		blank_vram();
+		
+		for(column = 0; column < 8; column++)
+		{
+			normalized_spectrum[column] = 8 - column;
+			encode_display();
+			send_display();
+			_delay_ms(75);
+		}
+		for(column = 0; column < 8; column++)
+		{
+			normalized_spectrum[column] = 0;
+			encode_display();
+			send_display();
+			_delay_ms(75);
+		}
+		blank_vram();
 	}
 }
