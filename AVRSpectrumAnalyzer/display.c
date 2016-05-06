@@ -20,11 +20,11 @@ void normalize_spectrum()
  * DBC - Display Bit Check
  *   Checks if column A is less than or equal to B, and then left-shifts it by C
  *   Row order, top to bottom of the display:
- *     1 5 7 3 2 6 4 0
+ *     1 5 7 3 0 4 6 2
  *   Byte order of segments, MSB to LSB:
  *     DP A B C D E F G
  *   Column order (bit shift):
- *     6 1 5 0 4 2 7 3
+ *     6 1 5 0 3 7 2 4
  */
 
 const uint8_t bar_value[9] = {0x00, 0x40, 0x42, 0x62, 0x63, 0x6B, 0xEB, 0xEF, 0xFF};
