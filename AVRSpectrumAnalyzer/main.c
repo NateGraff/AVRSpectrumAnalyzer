@@ -34,6 +34,7 @@ void blank_vram()
 	for(i = 0; i < 8; i++)
 	{
 		vram[i] = 0x00;
+		normalized_spectrum[i] = 0;
 	}	
 }
 
@@ -48,32 +49,30 @@ int main(void)
 	blank_display();
 	
 	sample = 0;
+	
+	uint8_t column_list[8] = {1, 5, 7, 3, 0, 4, 6, 2};
+	uint8_t row_list[8] = {6, 1, 5, 0, 3, 7, 2, 4};
 
     while(1)
 	{
-		uint8_t row, column;
-		
-		// turn on row by row
-		for(row = 0; row < 8; row++)
-		{
-			blank_vram();
-			vram[row] = 0xFF;
-			
-			send_display();
-			_delay_ms(500);
-		}
-		
-		// turn on column by column
+		uint8_t column, row;
 		for(column = 0; column < 8; column++)
 		{
 			blank_vram();
-			for(row = 0; row < 8; row++)
-			{
-				vram[row] = (1<<column);
-			}
-			
+			vram[column_list[column]] = 0xFF;
 			send_display();
-			_delay_ms(500);
+			_delay_ms(50);
+		}
+		
+		for(row = 0; row < 8; row++)
+		{
+			blank_vram();
+			for(column = 0; column < 8; column++)
+			{
+				vram[column_list[column]] = (1<<row_list[row]);
+			}
+			send_display();
+			_delay_ms(50);
 		}
 	}
 }
