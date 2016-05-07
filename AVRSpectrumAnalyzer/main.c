@@ -41,31 +41,56 @@ void blank_vram()
 
 int main(void)
 {
+	// ADC Configuration
+	ADMUX  = 0x00; // AREF, ADC0
+	ADCSRB = 0x00; // Free Running Mode
+	ADCSRA |= (1<<ADEN)|(1<<ADIE); // Enable ADC, ADC interrupt
+	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); // prescaler 128 TODO: minimize
+	DIDR0  |= (1<<ADC0D); // disable digital input
+	
 	// SPI and Display Configuration
 	init_SPI();
-	send_cmd(SHUTDOWN_ADDR, 0x01);
+	send_cmd(SHUTDOWN_ADDR, SHUTDOWN_DISPLAY_ON);
 	send_cmd(DECODE_MODE_ADDR, DECODE_MODE_NO_DECODE);
 	send_cmd(INTENSITY_ADDR, INTENSITY_MAX);
 	send_cmd(SCAN_LIMIT_ADDR, SCAN_LIMIT_MAX);
 	blank_display();
 	
-	sample = 0;
+	// Test all pixels at startup
+	send_cmd(DISPLAY_TEST_ADDR, DISPLAY_TEST_ON);
+	_delay_ms(500);
+	send_cmd(DISPLAY_TEST_ADDR, DISPLAY_TEST_OFF);
+	_delay_ms(500);
 	
-	uint8_t sample_data[8] = {37, 72, 104, 130, 205, 130, 205, 104};
-//	uint8_t sample_data[8] = {0};
+	sample = 0;
 
-    while(1)
+	sei();
+	ADCSRA |= (1<<ADSC); // Start ADC
+
+    while(1);
+}
+
+ISR(ADC_vect)
+{	
+	if(sample < FHT_N)
 	{
-		uint8_t column;
-		for(column = 0; column < 8; column++)
-		{
-			fht_log_out[column] = sample_data[column] + 30 * sin((double) sample * 0.1 + (double) column * 2.1);
-			normalize_spectrum();
-			encode_display();
-			send_display();
-		}
-		
-		_delay_ms(5);
+		store_sample(ADCH, ADCL);
 		++sample;
 	}
+	else
+	{
+		// Run the FHT
+		fht_window();
+		fht_reorder();
+		fht_run();
+		fht_mag_log();
+		
+		// Process and display the FHT results
+		normalize_spectrum();
+		encode_display();
+		send_display();
+		
+		sample = 0;
+	}
+	ADCSRA |= (1<<ADSC); // restart the ADC
 }
