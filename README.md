@@ -1,5 +1,6 @@
 # AVR Spectrum Visualizer Project
 Nate Graff
+
 Created as a final project for Cal Poly CPE 329
 
 ## What does it do?
