@@ -9,7 +9,7 @@
 
 // FHT Library Defines
 #define LOG_OUT 1
-#define FHT_N 16
+#define FHT_N 64
 
 #include "FHT/FHT.h"
 #include "display.h"
@@ -17,7 +17,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <math.h>
 
 volatile uint8_t sample;
 
@@ -45,7 +44,7 @@ int main(void)
 	ADMUX  = 0x00; // AREF, ADC0
 	ADCSRB = 0x00; // Free Running Mode
 	ADCSRA |= (1<<ADEN)|(1<<ADIE); // Enable ADC, ADC interrupt
-	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); // prescaler 128 TODO: minimize
+	ADCSRA |= (1<<ADPS2)|(0<<ADPS1)|(1<<ADPS0); // prescaler 32
 	DIDR0  |= (1<<ADC0D); // disable digital input
 	
 	// SPI and Display Configuration

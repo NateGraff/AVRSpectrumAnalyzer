@@ -2,10 +2,15 @@
 #include "display.h"
 #include <avr/io.h>
 
+// Display offset cuts off the first two frequency buckets
+// since the first two buckets just pick up the fundamental
+// and second harmonic of the sampling period
+#define DISPLAY_OFFSET 2
+
 volatile uint8_t normalized_spectrum[8];
 volatile uint8_t vram[8];
 
-extern uint8_t fht_log_out[8];
+extern uint8_t fht_log_out[16];
 void normalize_spectrum()
 {
 	/* 
@@ -13,21 +18,22 @@ void normalize_spectrum()
 	 *   256 / 9 ~~ 28
 	 *   Anything below  15 is a 0
 	 *   Anything above 243 is an 8
-	 *   This makes the magnitudes roughly linear
+	 *   This makes the magnitudes roughly linear over the range
+	 *   of fht_log_out values
 	 */
 	uint8_t i;
 	for(i = 0; i < 8; i++)
 	{
-		if(fht_log_out[i] <= 14)
+		if(fht_log_out[i+DISPLAY_OFFSET] <= 14)
 		{
 			normalized_spectrum[i] = 0;
 		}
-		else if(fht_log_out[i] >= 242)
+		else if(fht_log_out[i+DISPLAY_OFFSET] >= 242)
 		{
 			normalized_spectrum[i] = 8;
 		}
 		else {
-			normalized_spectrum[i] = fht_log_out[i] / 28;
+			normalized_spectrum[i] = fht_log_out[i+DISPLAY_OFFSET] / 28;
 		}
 	}
 }
