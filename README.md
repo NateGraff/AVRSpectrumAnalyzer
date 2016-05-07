@@ -17,7 +17,7 @@ Displays the magnitude of the audio spectrum from about 700 Hz to about 3 kHz on
 Yes/No. Don't use the MAX7219CNG. Get a prebuilt 8x8 matrix controller module and use that. The pinout of this chip is inane. If you do use a better matrix driver, you'll need to modify the encode_display() function, which transforms the vram matrix to match what I had to do to have a sane wiring harness.
 
 ## I want to use the MAX7219CNG, how did you wire it?
-![MAX7219CNG Wiring Diagram][https://github.com/NateGraff/AVRSpectrumAnalyzer/raw/master/Max7219CNGWiringDiagram.png]
+![MAX7219CNG Wiring Diagram](https://raw.githubusercontent.com/NateGraff/AVRSpectrumAnalyzer/master/MAX7219CNGWiringDiagram.png)
 
 ## What FFT Library did you use?
 I used [Open Music Labs' Arduino FHT Library](http://wiki.openmusiclabs.com/wiki/ArduinoFHT). I used the Hartley transform so I wouldn't bother wasting cycles computing phase data.
